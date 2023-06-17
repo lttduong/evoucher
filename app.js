@@ -27,7 +27,7 @@ app.get('/createTables', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {testName: 'Loc'})
 });
 
 app.get('/roles', async (req, res) => {
