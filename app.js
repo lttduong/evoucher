@@ -1,5 +1,7 @@
 const express = require('express');
 const exphbs = require('express-handlebars')
+const path = require("path");
+const fs = require("fs");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -18,15 +20,19 @@ app.engine('hbs', exphbs.engine({
 app.set('view engine', 'hbs');
 
 // routes
-app.get('/createTables', (req, res) => {
-    let models = require('./models');
-    models.sequelize.sync().then(() => {
-        res.send('tables created !');
-    })
+app.get('/createTables', async (req, res) => {
+    require('./models/createTable');
+
+    res.send('tables created !');
 });
 
 app.get('/', (req, res) => {
     res.render('index')
+});
+
+app.get('/roles', async (req, res) => {
+    const Role = require('./models/Role');
+    return res.json(await Role.findAll());
 });
 
 app.get('/:page', (req, res) => {
