@@ -7,7 +7,8 @@ class User extends Model {
     static associate(models) {
         // define association here
         User.belongsTo(models.Role, {foreignKey: 'roleId'});
-        User.hasMany(models.Partner)
+        User.hasMany(models.Partner);
+        User.hasMany(models.UserCoupon);
     }
 }
 
