@@ -40,7 +40,7 @@ app.get('/roles', async (req, res) => {
     return res.json(await Role.findAll());
 });
 
-app.use('/table', usersRouter);
+app.use('/users', usersRouter);
 
 app.get('/:page', (req, res) => {
     res.render(req.params.page);
