@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 var usersRouter = require('./api/routes/UserRoute');
-
+var partnersRouter = require('./api/routes/PartnerRoute');
 
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,6 +41,7 @@ app.get('/roles', async (req, res) => {
 });
 
 app.use('/users', usersRouter);
+app.use('/partners', partnersRouter);
 
 app.get('/:page', (req, res) => {
     res.render(req.params.page);
