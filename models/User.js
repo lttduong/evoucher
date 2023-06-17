@@ -23,7 +23,7 @@ User.init({
     email: {type: DataTypes.STRING, notNull: true, unique: true},
     username: {type: DataTypes.STRING, notNull: true, unique: true},
     password: {type: DataTypes.STRING, notNull: true},
-    birthDay: {type: DataTypes.DATE, notNull: true},
+    birthDay: {type: DataTypes.DATE},
     address: DataTypes.STRING,
     roleId: {
         type: DataTypes.INTEGER,
