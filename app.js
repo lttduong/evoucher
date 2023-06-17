@@ -5,7 +5,12 @@ const fs = require("fs");
 const app = express();
 const port = process.env.PORT || 5000;
 
+var usersRouter = require('./api/routes/UserRoute');
 
+
+var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Config static file
 app.use(express.static(__dirname + '/public'));
@@ -35,9 +40,11 @@ app.get('/roles', async (req, res) => {
     return res.json(await Role.findAll());
 });
 
-app.get('/:page', (req, res) => {
-    res.render(req.params.page);
-});
+// app.get('/:page', (req, res) => {
+//     res.render(req.params.page);
+// });
+
+app.use('/table', usersRouter);
 
 // Start server
 app.listen(port, () => {
