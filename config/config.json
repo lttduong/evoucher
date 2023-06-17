@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "Devops1.!",
+    "password": "",
     "database": "evoucher",
     "host": "127.0.0.1",
     "dialect": "mysql"
