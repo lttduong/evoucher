@@ -7,12 +7,12 @@ var User = require('../../models/User');
 // display user page
 router.get('/', async function(req, res, next) {      
     const data = await User.findAll();
-    res.render('table',{data:data});
+    res.render('user',{data:data});
 });
 // display add user page
-router.get('/user/add', function(req, res, next) {    
+router.get('/add', function(req, res, next) {    
     // render to add.ejs
-    res.render('table/user/add', {
+    res.render('users/add', {
         firstName: '',
         lastName: '',
         email: '',
@@ -25,7 +25,7 @@ router.get('/user/add', function(req, res, next) {
 })
 
 // add a new user
-router.post('/user/add', async function(req, res, next) {
+router.post('/add', async function(req, res, next) {
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
@@ -40,7 +40,7 @@ router.post('/user/add', async function(req, res, next) {
         errors = true;
 
         // render to add.ejs with flash message
-        res.render('table/users/add', {
+        res.render('users/add', {
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -68,12 +68,12 @@ router.post('/user/add', async function(req, res, next) {
         }
         // insert query
         await User.create(form_data);
-        res.render('table',{message: "User successfully added"});
+        res.render('users',{message: "User successfully added"});
     }
 })
 
 // display edit user page
-router.get('/user/edit/(:id)', async function(req, res, next) {
+router.get('/edit/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
     const data = await User.findAll({
@@ -81,11 +81,11 @@ router.get('/user/edit/(:id)', async function(req, res, next) {
           id: id
         }
     });
-    res.render('table/user/edit',{data: data});
+    res.render('users/edit',{data: data});
 })
 
 // update user data
-router.post('/user/update/:id', async function(req, res, next) {
+router.post('/update/:id', async function(req, res, next) {
 
     let id = req.params.id;
     let firstName = req.body.firstName;
@@ -102,7 +102,7 @@ router.post('/user/update/:id', async function(req, res, next) {
         errors = true;
         
         // render to add.ejs with flash message
-        res.render('table/users/edit', {
+        res.render('users/edit', {
             id: req.params.id,
             firstname: firstName,
             lastname: lastName,
@@ -135,12 +135,12 @@ router.post('/user/update/:id', async function(req, res, next) {
                 id: id
             }
         })
-        res.render('table',{message: 'User successfully updated ID = ' + id})
+        res.render('users',{message: 'User successfully updated ID = ' + id})
     }
 })
    
 // delete user
-router.get('/user/delete/(:id)', async function(req, res, next) {
+router.get('/delete/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
      
@@ -149,6 +149,6 @@ router.get('/user/delete/(:id)', async function(req, res, next) {
           id: id
         }
     });
-    res.render('table',{message: 'User successfully deleted! ID = ' + id})
+    res.render('users',{message: 'User successfully deleted! ID = ' + id})
 })
 module.exports = router;
