@@ -1,7 +1,5 @@
 'use strict'
 
-const util = require('util')
-const db = require('../db')
 var express = require('express');
 const { time } = require('console');
 var router = express.Router();
@@ -83,8 +81,7 @@ router.get('/user/edit/(:id)', async function(req, res, next) {
           id: id
         }
     });
-    console.log(data);
-    // res.render('table/user/edit',{data: data});
+    res.render('table/user/edit',{data: data});
 })
 
 // update user data
