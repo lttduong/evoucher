@@ -40,11 +40,12 @@ app.get('/roles', async (req, res) => {
     return res.json(await Role.findAll());
 });
 
-// app.get('/:page', (req, res) => {
-//     res.render(req.params.page);
-// });
-
 app.use('/table', usersRouter);
+
+app.get('/:page', (req, res) => {
+    res.render(req.params.page);
+});
+
 
 // Start server
 app.listen(port, () => {
