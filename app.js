@@ -1,16 +1,21 @@
 const express = require('express');
 const exphbs = require('express-handlebars')
-const path = require("path");
-const fs = require("fs");
 const app = express();
 const port = process.env.PORT || 5000;
+const passport = require('passport');
+var cookieParser = require('cookie-parser');
+var config = require("./config/jwt");
 
 var usersRouter = require('./api/routes/UserRoute');
 var partnersRouter = require('./api/routes/PartnerRoute');
 
+// Passport config
+require("./api/passport")(passport);
+
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser(config.jwt.secret));
 
 // Config static file
 app.use(express.static(__dirname + '/public'));
@@ -32,7 +37,7 @@ app.get('/createTables', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {testName: 'Loc'})
 });
 
 app.get('/roles', async (req, res) => {
@@ -42,6 +47,7 @@ app.get('/roles', async (req, res) => {
 
 app.use('/users', usersRouter);
 app.use('/partners', partnersRouter);
+app.use('/auth', require('./api/routes/AuthRoute'));
 
 app.get('/:page', (req, res) => {
     res.render(req.params.page);
