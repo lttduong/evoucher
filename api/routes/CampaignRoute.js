@@ -11,14 +11,12 @@ router.get('/', async function(req, res, next) {
     const data = await Campaign.findAll({
         include: Partner
     });
-    res.send({data:data, message: "Get data successfully"});
-    res.render('campaigns',{data: data});
+    res.render('layouts/campaigns/list',{data:JSON.stringify({campaigns: data})});
 });
 // display add Campaign page
 router.get('/add', async function(req, res, next) {   
     const dataPartner = await Partner.findAll(); 
-    res.send({dataPartner: dataPartner});
-    res.render('campaigns',{dataPartner: dataPartner});
+    res.render('layouts/campaigns/add',{data: JSON.stringify({partners: dataPartner})});
 })
 
 // add a new Campaign
@@ -58,13 +56,14 @@ router.get('/edit/(:id)', async function(req, res, next) {
     let id = req.params.id;
     Partner.hasMany(Campaign);
     Campaign.belongsTo(Partner);
-    const data = await Campaign.findAll({
+    const data = await Campaign.findOne({
         include: Partner,
         where: {
           id: id
         }
     });
-    res.send({data: data, message: "Get data successfully"});
+    const dataPartner = await Partner.findAll(); 
+    res.render('layouts/campaigns/add',{data: JSON.stringify({campaign: data,partners: dataPartner})});
 })
 
 // update Campaign data
