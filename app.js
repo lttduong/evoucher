@@ -8,6 +8,9 @@ var config = require("./config/jwt");
 
 var usersRouter = require('./api/routes/UserRoute');
 var partnersRouter = require('./api/routes/PartnerRoute');
+var couponsRouter = require('./api/routes/CouponRoute');
+var campaignsRouter = require('./api/routes/CampaignRoute');
+var CampaignCouponRoute = require('./api/routes/CampaignCouponRoute');
 
 // Passport config
 require("./api/passport")(passport);
@@ -48,6 +51,9 @@ app.get('/roles', async (req, res) => {
 app.use('/users', usersRouter);
 app.use('/partners', partnersRouter);
 app.use('/auth', require('./api/routes/AuthRoute'));
+app.use('/coupons', couponsRouter);
+app.use('/campaigns', campaignsRouter);
+app.use('/campaign-coupons', CampaignCouponRoute);
 
 app.get('/:page', (req, res) => {
     res.render(req.params.page);

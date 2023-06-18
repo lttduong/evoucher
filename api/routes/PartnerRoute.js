@@ -1,24 +1,28 @@
 'use strict'
 
 var express = require('express');
-const { time } = require('console');
 var router = express.Router();
 var Partner = require('../../models/Partner');
+var User = require('../../models/User');
+
 // display partner page
 router.get('/', async function(req, res, next) {      
-    const data = await Partner.findAll();
-    res.render('partner',{data:data});
+    User.hasMany(Partner);
+    Partner.belongsTo(User);
+    const data = await Partner.findAll({
+        include: User
+    });
+    res.send({data:data, message: "Get data successfully"});
+    res.render('partners',{data:data});
 });
 // display add partner page
-router.get('/add', function(req, res, next) {    
-    res.render('partners/add', {
-        companyName: '',
-        website: '',
-        userId: 0
-    })
+router.get('/add', async function(req, res, next) {    
+    const dataUser = await User.findAll();
+    res.send({dataUser: dataUser});
+    res.render('partners',{dataUser: dataUser});
 })
 
-// add a new user
+// add a new Partner
 router.post('/add', async function(req, res, next) {
     let companyName = req.body.companyName;
     let website = req.body.website;
@@ -27,18 +31,11 @@ router.post('/add', async function(req, res, next) {
 
     if(companyName === '' || website === '' || userId === 0) {
         errors = true;
-
-        res.render('partners/add', {
-            companyName: companyName,
-            website: website,
-            userId: userId,
-            message: "Please check companyName and website and user ID"
-        })
+        res.send({status: 400, message: "Please check companyName and website and user ID"});
     }
 
     // if no error
     if(!errors) {
-
         var form_data = {
             companyName: companyName,
             website: website,
@@ -46,24 +43,28 @@ router.post('/add', async function(req, res, next) {
         }
         // insert query
         await Partner.create(form_data);
-        res.render('partners',{message: "Partner successfully added"});
+        res.send({status: 200, message: "Partner successfully added"});
     }
 })
 
-// display edit user page
+// display edit Partner page
 router.get('/edit/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
+    User.hasMany(Partner);
+    Partner.belongsTo(User);
     const data = await Partner.findAll({
+        include: User,
         where: {
           id: id
         }
     });
-    console.log(data);
-    res.render('partners/edit',{data: data});
+    const dataUser = await User.findAll();
+    res.send({data:data, dataUser: dataUser, message: "Get data successfully"});
+    res.render('partners',{data:data, dataUser: dataUser});
 })
 
-// update user data
+// update Partner data
 router.post('/update/:id', async function(req, res, next) {
 
     let id = req.params.id;
@@ -73,16 +74,8 @@ router.post('/update/:id', async function(req, res, next) {
     let errors = false;
 
     if(companyName === '' || website === '' || userId === 0) {
-        errors = true;
-        
-        // render to add.ejs with flash message
-        res.render('partners/edit', {
-            id: req.params.id,
-            companyName: companyName,
-            website: website,
-            userId: userId,
-            message: "Please check company name and website and user ID"
-        })
+        errors = true;        
+        res.send({status: 400, message: "Please check companyName and website and user ID"});
     }
 
     // if no error
@@ -99,11 +92,11 @@ router.post('/update/:id', async function(req, res, next) {
                 id: id
             }
         })
-        res.render('partners',{message: 'Partner successfully updated ID = ' + id})
+        res.send({status: 200, message: 'Partner successfully updated ID = ' + id});
     }
 })
    
-// delete user
+// delete Partner
 router.get('/delete/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
@@ -113,6 +106,6 @@ router.get('/delete/(:id)', async function(req, res, next) {
           id: id
         }
     });
-    res.render('partners',{message: 'Paerner successfully deleted! ID = ' + id})
+    res.send({status: 200, message: 'Paerner successfully deleted! ID = ' + id});
 })
 module.exports = router;
