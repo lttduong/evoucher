@@ -21,6 +21,7 @@
                                 <th scope="col">Password</th>
                                 <th scope="col">Address</th>
                                 <th scope="col">Role</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,7 +39,6 @@
                                         <div class="btn-group" role="group">
                                             <a @click="deleteUser('/users/delete/'+user.id)" class="btn btn-danger">Delete</a>
                                             <a :href="'/users/edit/'+user.id" class="btn btn-primary">Update</a>
-                                            <a :href="'/users/delete/'+user.id" class="btn btn-info">View</a>
                                         </div>
                                     </div>
                                 </td>

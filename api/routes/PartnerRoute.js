@@ -12,14 +12,12 @@ router.get('/', async function(req, res, next) {
     const data = await Partner.findAll({
         include: User
     });
-    res.send({data:data, message: "Get data successfully"});
-    res.render('partners',{data:data});
+    res.render('layouts/partners/list.hbs',{data: JSON.stringify({partner: data})});
 });
 // display add partner page
 router.get('/add', async function(req, res, next) {    
     const dataUser = await User.findAll();
-    res.send({dataUser: dataUser});
-    res.render('partners',{dataUser: dataUser});
+    res.render('layouts/partners/add.hbs',{data: JSON.stringify({users:dataUser}) });
 })
 
 // add a new Partner
@@ -53,15 +51,14 @@ router.get('/edit/(:id)', async function(req, res, next) {
     let id = req.params.id;
     User.hasMany(Partner);
     Partner.belongsTo(User);
-    const data = await Partner.findAll({
+    const data = await Partner.findOne({
         include: User,
         where: {
           id: id
         }
     });
     const dataUser = await User.findAll();
-    res.send({data:data, dataUser: dataUser, message: "Get data successfully"});
-    res.render('partners',{data:data, dataUser: dataUser});
+    res.render('layouts/partners/add.hbs',{data:JSON.stringify({partner:data, users: dataUser})});
 })
 
 // update Partner data
@@ -86,7 +83,6 @@ router.post('/update/:id', async function(req, res, next) {
             userId: userId
         }
         // update query
-        console.log(form_data);
         await Partner.update(form_data, {
             where: {
                 id: id
