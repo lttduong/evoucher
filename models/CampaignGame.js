@@ -24,7 +24,17 @@ CampaignGame.init({
     gameId: {
         type:DataTypes.INTEGER,
         notNull: true
-    }
+    },
+    createdAt: {
+        type: 'TIMESTAMP',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
+      },
+      updatedAt: {
+        type: 'TIMESTAMP',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
+      }
 }, {
     sequelize,
     modelName: 'CampaignGame',

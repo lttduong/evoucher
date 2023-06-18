@@ -18,7 +18,17 @@ CouponType.init({
     },
     description: {type: DataTypes.STRING, notNull: true},
     percent: {type: DataTypes.DOUBLE, notNull: true},
-    discount: {type: DataTypes.DECIMAL, notNull: true}
+    discount: {type: DataTypes.DECIMAL, notNull: true},
+    createdAt: {
+        type: 'TIMESTAMP',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
+      },
+      updatedAt: {
+        type: 'TIMESTAMP',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+        allowNull: false
+      }
 }, {
     sequelize,
     modelName: 'CouponType',
