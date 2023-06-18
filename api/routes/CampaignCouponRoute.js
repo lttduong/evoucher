@@ -5,29 +5,40 @@ var router = express.Router();
 var CampaignCoupon = require('../../models/CampaignCoupon');
 var Campaign = require('../../models/Campaign');
 var Coupon = require('../../models/CouponType');
+var Partner = require('../../models/Partner');
 
 // display Campaign Coupon page
-router.get('/', async function(req, res, next) {      
-    // Campaign.hasMany(CampaignCoupon);
-    // CampaignCoupon.belongsTo(Campaign);
-    // Campaign.hasMany(Coupon);    
-    const data = await CampaignCoupon.findAll({
-        include: [
-          {model: Campaign},
-          {model: Coupon}
-        ]
-      });
-    console.log(data);
-    res.send({data:data, message: "Get data successfully"});
+router.get('/', async function(req, res, next) {
+    Coupon.hasMany(CampaignCoupon);
+    CampaignCoupon.belongsTo(Coupon);
+    Campaign.hasMany(CampaignCoupon);
+    CampaignCoupon.belongsTo(Campaign);
+    const data = CampaignCoupon.findAll(
+        {
+            include: [
+                {
+                    model: Coupon,
+                    required: true, 
+                }, 
+                {
+                    model: Campaign,
+                    required: true
+                }
+            ]
+        }
+    );
+    res.send({data: data, message: "Get data successfully"});
 });
 // display add Campaign page
-router.get('/add', function(req, res, next) {    
-    res.render('campaign-coupons/add', {
-        campaignId: 0,
-        couponTypeId: 0,
-        quantity: 0,
-        remainingAmount: 0
-    })
+router.get('/add', async function(req, res, next) {   
+    Partner.hasMany(Campaign);
+    Campaign.belongsTo(Partner);
+    const dataCampaign = await Campaign.findAll({
+        include: Partner
+    }); 
+    const dataCoupon = await Coupon.findAll();
+    res.send({dataCampaign: dataCampaign, dataCoupon: dataCoupon});
+    res.render('campaign-coupons/add',{dataCampaign: dataCampaign, dataCoupon: dataCoupon});
 })
 
 // add a new Campaign
@@ -41,14 +52,7 @@ router.post('/add', async function(req, res, next) {
 
     if(campaignId === 0 || couponTypeId === 0 || quantity === 0 || remainingAmount === 0) {
         errors = true;
-
-        res.render('campaign-coupons/add', {
-            campaignId: campaignId,
-            couponTypeId: couponTypeId,
-            quantity: quantity,
-            remainingAmount: remainingAmount,
-            message: "Please check campaignId, couponTypeId, quantity, remainingAmount"
-        })
+        res.send({status: 400, message: "Please check campaignId, couponTypeId, quantity, remainingAmount"});
     }
 
     // if no error
@@ -62,7 +66,7 @@ router.post('/add', async function(req, res, next) {
         }
         // insert query
         await CampaignCoupon.create(form_data);
-        res.render('campaign-coupons',{message: "campaign Coupons type successfully added"});
+        res.send({status: 200, message: "Campaign Coupons type successfully added"});
     }
 })
 
@@ -70,13 +74,33 @@ router.post('/add', async function(req, res, next) {
 router.get('/edit/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
+    Coupon.hasMany(CampaignCoupon);
+    CampaignCoupon.belongsTo(Coupon);
+    Campaign.hasMany(CampaignCoupon);
+    CampaignCoupon.belongsTo(Campaign);
     const data = await CampaignCoupon.findAll({
+        include: [
+            {
+                model: Coupon,
+                required: true, 
+            }, 
+            {
+                model: Campaign,
+                required: true
+            }
+        ],
         where: {
           id: id
         }
     });
-    console.log(data);
-    res.render('campaign-coupons/edit',{data: JSON.parse(data)});
+    Partner.hasMany(Campaign);
+    Campaign.belongsTo(Partner);
+    const dataCampaign = await Campaign.findAll({
+        include: Partner
+    }); 
+    const dataCoupon = await Coupon.findAll();
+    res.send({data: data, dataCampaign: dataCampaign, dataCoupon: dataCoupon});
+    res.render('campaign-coupons/edit',{data: data, dataCampaign: dataCampaign, dataCoupon: dataCoupon});
 })
 
 // update Campaign data
@@ -91,13 +115,7 @@ router.post('/update/:id', async function(req, res, next) {
 
     if(campaignId === 0 || couponTypeId === 0 || quantity === 0 || remainingAmount === 0) {
         errors = true;
-        res.render('campaign-coupons/edit', {
-            campaignId: campaignId,
-            couponTypeId: couponTypeId,
-            quantity: quantity,
-            remainingAmount: remainingAmount,
-            message: "Please check campaignId, couponTypeId, quantity, remainingAmount"
-        })
+        res.send({status: 400, message: "Please check campaignId, couponTypeId, quantity, remainingAmount"});
     }
 
     // if no error
@@ -109,26 +127,23 @@ router.post('/update/:id', async function(req, res, next) {
             remainingAmount: remainingAmount
         }
         // update query
-        console.log(form_data);
         await CampaignCoupon.update(form_data, {
             where: {
                 id: id
             }
         })
-        res.render('campaign-coupons',{message: 'campaign Coupons successfully updated ID = ' + id})
+        res.send({status: 200, message: 'campaign Coupons successfully updated ID = ' + id});
     }
 })
    
 // delete Campaign
 router.get('/delete/(:id)', async function(req, res, next) {
-
     let id = req.params.id;
-     
     await CampaignCoupon.destroy({
         where: {
           id: id
         }
     });
-    res.render('campaign-coupons',{message: 'campaign Coupons successfully deleted! ID = ' + id})
+    res.send({status: 200, message: 'Campaign Coupons successfully deleted! ID = ' + id});
 })
 module.exports = router;
