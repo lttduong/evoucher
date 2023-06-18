@@ -1,61 +1,42 @@
 'use strict'
 
 var express = require('express');
-const { time } = require('console');
+const { time, log, Console } = require('console');
 var router = express.Router();
 var User = require('../../models/User');
+var Role = require('../../models/Role');
+
 // display user page
 router.get('/', async function(req, res, next) {      
-    const data = await User.findAll();
-    res.render('user',{data:data});
+    const users = await User.findAll();
+    const roles = await Role.findAll();
+    res.render('layouts/users/list.hbs',{data:JSON.stringify({users: users, roles: roles})});
 });
 // display add user page
-router.get('/add', function(req, res, next) {    
-    // render to add.ejs
-    res.render('users/add', {
-        firstName: '',
-        lastName: '',
-        email: '',
-        username:'',
-        password: '',
-        birthDay: '',
-        address: '',
-        roleId: 0
-    })
+router.get('/add', async function(req, res, next) {   
+    const roles = await Role.findAll();
+    res.render('layouts/users/add.hbs', {data: JSON.stringify({roles: roles})});
 })
 
 // add a new user
-router.post('/add', async function(req, res, next) {
+router.post('/add', function(req, res, next) {
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
-    let username = req.body.username;
+    let username = req.body.userName;
     let password = req.body.password;
-    let birthDay = req.body.birthDay;
+    let birthDay = req.body.birthday;
     let address = req.body.address;
-    let roleId = req.body.roleId
+    let roleId = req.body.role
     let errors = false;
-
+    
+        
     if(firstName === '' || lastName === '' || email === '' || username  === '' || password === '') {
         errors = true;
-
-        // render to add.ejs with flash message
-        res.render('users/add', {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            username: username,
-            password: password,
-            birthDay: birthDay,
-            address: address,
-            roleId: roleId,
-            message: "Please check first name and last name and email and username"
-        })
+        res.send({status: 400,message: "Please check first name and last name and email and username"});
     }
 
-    // if no error
     if(!errors) {
-
         var form_data = {
             firstName: firstName,
             lastName: lastName,
@@ -67,8 +48,8 @@ router.post('/add', async function(req, res, next) {
             roleId: roleId
         }
         // insert query
-        await User.create(form_data);
-        res.render('users',{message: "User successfully added"});
+        User.create(form_data);
+        res.send({status: 200,message: "User successfully added"});
     }
 })
 
@@ -76,12 +57,13 @@ router.post('/add', async function(req, res, next) {
 router.get('/edit/(:id)', async function(req, res, next) {
 
     let id = req.params.id;
-    const data = await User.findAll({
+    const roles = await Role.findAll();
+    const data = await User.findOne({
         where: {
           id: id
         }
     });
-    res.render('users/edit',{data: data});
+    res.render('layouts/users/add.hbs',{data: JSON.stringify({user:data, roles:roles})});
 })
 
 // update user data
@@ -91,29 +73,16 @@ router.post('/update/:id', async function(req, res, next) {
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
     let email = req.body.email;
-    let username = req.body.username;
+    let username = req.body.userName;
     let password = req.body.password;
-    let birthDay = req.body.birthDay;
+    let birthDay = req.body.birthday;
     let address = req.body.address;
-    let roleId = req.body.roleId;
+    let roleId = req.body.role
     let errors = false;
 
     if(firstName === '' || lastName === '' || email === '' || username === '' || password === '') {
         errors = true;
-        
-        // render to add.ejs with flash message
-        res.render('users/edit', {
-            id: req.params.id,
-            firstname: firstName,
-            lastname: lastName,
-            email: email,
-            username: username,
-            password: password,
-            birthDay: birthDay,
-            address: address,
-            roleId: roleId,
-            message: "Please check first name and last name and email and username"
-        })
+        res.send({status: 400,message: "Please check first name and last name and email and username"});
     }
 
     // if no error
@@ -135,7 +104,7 @@ router.post('/update/:id', async function(req, res, next) {
                 id: id
             }
         })
-        res.render('users',{message: 'User successfully updated ID = ' + id})
+        res.send({status: 200,message: "User update successfully"});
     }
 })
    
@@ -149,6 +118,6 @@ router.get('/delete/(:id)', async function(req, res, next) {
           id: id
         }
     });
-    res.render('users',{message: 'User successfully deleted! ID = ' + id})
+    res.send({message: "User update successfully"});
 })
 module.exports = router;
