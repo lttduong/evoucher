@@ -2,7 +2,7 @@
     <!-- Table Start -->
 <div class="container-fluid pt-4 px-4" id="user-tbl">
     <div class="bg-light rounded h-100 p-4">
-        <h6 class="mb-4">Add User</h6>
+        <h6 class="mb-4">Add Partner</h6>
         <form>
             <div class="mb-3">
                 <label for="company" class="form-label">Company Name</label>
