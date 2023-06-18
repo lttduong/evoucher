@@ -6,7 +6,8 @@ const userList = require('../components/users/list.vue');
 const userAdd = require('../components/users/add.vue');
 const signIn = require('../components/signin.vue');
 const signUp = require('../components/signup.vue');
-
+const campaignList = require('../components/campaigns/list.vue');
+const campaignAdd = require('../components/campaigns/add.vue');
 
 function initVue() {
     window.$ = $;
@@ -18,6 +19,9 @@ function initVue() {
 
     Vue.component('partnerList', partnerList);
     Vue.component('partnerAdd', partnerAdd);
+
+    Vue.component('campaignList', campaignList);
+    Vue.component('campaignAdd', campaignAdd);
 
     new Vue({
         el: '#app'
