@@ -75,3 +75,16 @@ img {
     right: -5%;
   }
 }
+
+
+#partner-tbl thead tr th:last-child {
+  width: 200px;
+}
+#partner-tbl .title {
+  position: relative;
+}
+#partner-tbl .title .btn-add{
+  position: absolute;
+  right: 0;
+  top: -10px;
+}
